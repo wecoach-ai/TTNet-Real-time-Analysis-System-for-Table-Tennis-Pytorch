@@ -55,7 +55,7 @@ $ pip install PyTurboJPEG
 Other instruction for setting up virtual environments is [here](https://github.com/maudzung/virtual_environment_python3)
 
 ### 2.1. Preparing the dataset
-The instruction for the dataset preparation is [here](./prepare_dataset/README.md)
+The instruction for the dataset preparation is [here](https://github.com/wecoach-ai/DatasetHandler/blob/main/README.md)
 
 ### 2.2. Model & Input tensors
 
