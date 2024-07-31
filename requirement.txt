@@ -1,8 +1,6 @@
 torch==1.5.0
-torchvision==0.6.0
 easydict==1.13
-opencv-python==4.2.0.34
-numpy==1.18.3
-torchsummary==1.5.1
+opencv-python-headless==4.10.0.84
+numpy==2.0.1
 tensorboard==2.17.0
 scikit-learn==1.5.1
