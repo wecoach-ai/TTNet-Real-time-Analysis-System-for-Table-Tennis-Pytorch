@@ -1,6 +1,6 @@
 torch==1.5.0
 torchvision==0.6.0
-easydict==1.9
+easydict==1.13
 opencv-python==4.2.0.34
 numpy==1.18.3
 torchsummary==1.5.1
