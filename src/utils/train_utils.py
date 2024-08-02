@@ -77,12 +77,12 @@ def get_saved_state(model, optimizer, lr_scheduler, epoch, configs, best_val_los
 def save_checkpoint(checkpoints_dir, saved_fn, saved_state, is_best, epoch):
     """Save checkpoint every epoch only is best model or after every checkpoint_freq epoch"""
     if is_best:
-        save_path = os.path.join(checkpoints_dir, '{}_best.pth'.format(saved_fn))
+        save_path = os.path.join(checkpoints_dir, f'{saved_fn}_best.pth')
     else:
-        save_path = os.path.join(checkpoints_dir, '{}_epoch_{}.pth'.format(saved_fn, epoch))
+        save_path = os.path.join(checkpoints_dir, f'{saved_fn}_epoch_{epoch}.pth')
 
     torch.save(saved_state, save_path)
-    print('save a checkpoint at {}'.format(save_path))
+    print(f'save a checkpoint at {save_path}')
 
 
 def reduce_tensor(tensor, world_size):

@@ -248,9 +248,9 @@ def parse_configs():
     configs.use_best_checkpoint = True
 
     if configs.use_best_checkpoint:
-        configs.saved_weight_name = os.path.join(configs.checkpoints_dir, '{}_best.pth'.format(configs.saved_fn))
+        configs.saved_weight_name = os.path.join(configs.checkpoints_dir, f'{configs.saved_fn}_best.pth')
     else:
-        configs.saved_weight_name = os.path.join(configs.checkpoints_dir, '{}.pth'.format(configs.saved_fn))
+        configs.saved_weight_name = os.path.join(configs.checkpoints_dir, f'{configs.saved_fn}.pth')
 
     configs.results_dir = os.path.join(configs.working_dir, 'results')
 

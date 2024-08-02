@@ -14,7 +14,7 @@ class Logger():
         """
 
     def __init__(self, logs_dir, saved_fn):
-        logger_fn = 'logger_{}.txt'.format(saved_fn)
+        logger_fn = f'logger_{saved_fn}.txt'
         logger_path = os.path.join(logs_dir, logger_fn)
 
         self.logger = logging.getLogger(__name__)

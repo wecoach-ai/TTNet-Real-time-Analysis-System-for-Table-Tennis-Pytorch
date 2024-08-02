@@ -97,7 +97,7 @@ if __name__ == '__main__':
     game_list = ['game_1']
     dataset_type = 'training'
     train_events_infor, val_events_infor, *_ = train_val_data_separation(configs)
-    print('len(train_events_infor): {}'.format(len(train_events_infor)))
+    print(f'len(train_events_infor): {len(train_events_infor)}')
     # Test transformation
     transform = Compose([
         Random_Crop(max_reduction_percent=0.15, p=1.),
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
     ttnet_dataset = TTNet_Dataset(train_events_infor, configs.org_size, configs.input_size, transform=transform)
 
-    print('len(ttnet_dataset): {}'.format(len(ttnet_dataset)))
+    print(f'len(ttnet_dataset): {len(ttnet_dataset)}')
     example_index = 100
     resized_imgs, org_ball_pos_xy, global_ball_pos_xy, target_event, target_seg = ttnet_dataset.__getitem__(
         example_index)
@@ -116,15 +116,15 @@ if __name__ == '__main__':
         # Achieve better quality of images and faster
         origin_imgs = F.interpolate(torch.from_numpy(resized_imgs).unsqueeze(0).float(), (1080, 1920))
         origin_imgs = origin_imgs.squeeze().numpy().transpose(1, 2, 0).astype(np.uint8)
-        print('F.interpolate - origin_imgs shape: {}'.format(origin_imgs.shape))
+        print(f'F.interpolate - origin_imgs shape: {origin_imgs.shape}')
         resized_imgs = resized_imgs.transpose(1, 2, 0)
-        print('resized_imgs shape: {}'.format(resized_imgs.shape))
+        print(f'resized_imgs shape: {resized_imgs.shape}')
     else:
         # Test cv2.resize
         resized_imgs = resized_imgs.transpose(1, 2, 0)
-        print('resized_imgs shape: {}'.format(resized_imgs.shape))
+        print(f'resized_imgs shape: {resized_imgs.shape}')
         origin_imgs = cv2.resize(resized_imgs, (1920, 1080))
-        print('cv2.resize - origin_imgs shape: {}'.format(origin_imgs.shape))
+        print(f'cv2.resize - origin_imgs shape: {origin_imgs.shape}')
 
     out_images_dir = os.path.join(configs.results_dir, 'debug', 'ttnet_dataset')
     if not os.path.isdir(out_images_dir):
@@ -136,31 +136,27 @@ if __name__ == '__main__':
     for i in range(configs.num_frames_sequence):
         img = origin_imgs[:, :, (i * 3): (i + 1) * 3]
         axes[i].imshow(img)
-        axes[i].set_title('image {}'.format(i))
+        axes[i].set_title(f'image {i}')
     fig.suptitle(
-        'Event: is bounce {}, is net: {}, ball_position_xy: (x= {}, y= {})'.format(target_event[0], target_event[1],
-                                                                                   org_ball_pos_xy[0],
-                                                                                   org_ball_pos_xy[1]),
+        f'Event: is bounce {target_event[0]}, is net: {target_event[1]}, ball_position_xy: (x= {org_ball_pos_xy[0]}, y= {org_ball_pos_xy[1]})',
         fontsize=16)
-    plt.savefig(os.path.join(out_images_dir, 'org_all_imgs_{}.jpg'.format(example_index)))
+    plt.savefig(os.path.join(out_images_dir, f'org_all_imgs_{example_index}.jpg'))
     target_seg = target_seg.transpose(1, 2, 0)
-    print('target_seg shape: {}'.format(target_seg.shape))
+    print(f'target_seg shape: {target_seg.shape}')
 
-    plt.imsave(os.path.join(out_images_dir, 'augment_seg_img_{}.jpg'.format(example_index)), target_seg)
+    plt.imsave(os.path.join(out_images_dir, f'augment_seg_img_{example_index}.jpg'), target_seg)
     for i in range(configs.num_frames_sequence):
         img = resized_imgs[:, :, (i * 3): (i + 1) * 3]
         if (i == (configs.num_frames_sequence - 1)):
             img = cv2.resize(img, (img.shape[1], img.shape[0]))
             ball_img = cv2.circle(img, tuple(global_ball_pos_xy), radius=5, color=(255, 0, 0), thickness=2)
             ball_img = cv2.cvtColor(ball_img, cv2.COLOR_RGB2BGR)
-            cv2.imwrite(os.path.join(out_images_dir, 'augment_img_{}.jpg'.format(example_index)),
+            cv2.imwrite(os.path.join(out_images_dir, f'augment_img_{example_index}.jpg'),
                         ball_img)
 
         axes[i].imshow(img)
-        axes[i].set_title('image {}'.format(i))
+        axes[i].set_title(f'image {i}')
     fig.suptitle(
-        'Event: is bounce {}, is net: {}, ball_position_xy: (x= {}, y= {})'.format(target_event[0], target_event[1],
-                                                                                   global_ball_pos_xy[0],
-                                                                                   global_ball_pos_xy[1]),
+        f'Event: is bounce {target_event[0]}, is net: {target_event[1]}, ball_position_xy: (x= {global_ball_pos_xy[0]}, y= {global_ball_pos_xy[1]})',
         fontsize=16)
-    plt.savefig(os.path.join(out_images_dir, 'augment_all_imgs_{}.jpg'.format(example_index)))
+    plt.savefig(os.path.join(out_images_dir, f'augment_all_imgs_{example_index}.jpg'))

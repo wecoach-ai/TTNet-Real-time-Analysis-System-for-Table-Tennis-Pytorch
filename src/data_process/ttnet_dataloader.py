@@ -76,4 +76,4 @@ if __name__ == '__main__':
     configs = parse_configs()
     configs.distributed = False  # For testing
     train_dataloader, val_dataloader, train_sampler = create_train_val_dataloader(configs)
-    print('len train_dataloader: {}, val_dataloader: {}'.format(len(train_dataloader), len(val_dataloader)))
+    print(f'len train_dataloader: {len(train_dataloader)}, val_dataloader: {len(val_dataloader)}')
