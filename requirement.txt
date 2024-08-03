@@ -1,4 +1,4 @@
-torch==1.5.0
+torch==1.13.1
 easydict==1.13
 opencv-python-headless==4.10.0.84
 numpy==2.0.1
