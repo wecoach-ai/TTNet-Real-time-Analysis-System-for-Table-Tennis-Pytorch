@@ -5,3 +5,4 @@ numpy==2.0.1
 tensorboard==2.17.0
 scikit-learn==1.5.1
 PyTurboJPEG==1.7.5
+tqdm==4.66.5
