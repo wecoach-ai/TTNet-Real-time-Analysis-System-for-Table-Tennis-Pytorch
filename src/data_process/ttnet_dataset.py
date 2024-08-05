@@ -10,7 +10,6 @@
 """
 
 import sys
-import os
 import numpy as np
 import time
 from pathlib import Path
@@ -128,8 +127,8 @@ if __name__ == '__main__':
         print(f'cv2.resize - origin_imgs shape: {origin_imgs.shape}')
 
     out_images_dir = Path(configs.results_dir) / 'debug' / 'ttnet_dataset'
-    if not os.path.isdir(out_images_dir):
-        os.makedirs(out_images_dir)
+    if not Path(out_images_dir).is_dir():
+        Path(out_images_dir).mkdir(parents=True, exist_ok=True)
 
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(20, 20))
     axes = axes.ravel()

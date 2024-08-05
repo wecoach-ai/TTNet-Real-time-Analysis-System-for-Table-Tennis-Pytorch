@@ -1,11 +1,10 @@
-import os
+from pathlib import Path
 import torch
 import time
 
 def make_folder(folder_name):
-    if not os.path.exists(folder_name):
-        os.makedirs(folder_name)
-    # or os.makedirs(folder_name, exist_ok=True)
+    if not Path(folder_name).exists():
+        Path(folder_name).mkdir(parents=True, exist_ok=True)
 
 
 class AverageMeter(object):

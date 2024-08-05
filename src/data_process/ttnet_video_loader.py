@@ -9,7 +9,6 @@
 # Description: This script creates the video loader for testing with an input video
 """
 
-import os
 from collections import deque
 from pathlib import Path
 
@@ -21,7 +20,7 @@ class TTNet_Video_Loader:
     """The loader for demo with a video input"""
 
     def __init__(self, video_path, input_size=(320, 128), num_frames_sequence=9):
-        assert os.path.isfile(video_path), f"No video at {video_path}"
+        assert Path(video_path).is_file(), f"No video at {video_path}"
         self.cap = cv2.VideoCapture(video_path)
         self.video_fps = int(round(self.cap.get(cv2.CAP_PROP_FPS)))
         self.video_w = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -80,8 +79,8 @@ if __name__ == '__main__':
     video_loader = TTNet_Video_Loader(video_path, input_size=(320, 128),
                                       num_frames_sequence=configs.num_frames_sequence)
     out_images_dir = Path(configs.results_dir) / 'debug'/ 'ttnet_video_loader'
-    if not os.path.isdir(out_images_dir):
-        os.makedirs(out_images_dir)
+    if not Path(out_images_dir).is_dir():
+        Path(out_images_dir).mkdir(parents=True, exist_ok=True)
 
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(20, 20))
     axes = axes.ravel()

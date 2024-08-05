@@ -33,8 +33,8 @@ def demo(configs):
     frame_rate = video_loader.video_fps
     if configs.save_demo_output:
         configs.frame_dir = Path(configs.save_demo_dir) / 'frame'
-        if not os.path.isdir(configs.frame_dir):
-            os.makedirs(configs.frame_dir)
+        if not Path(configs.frame_dir).is_dir():
+            Path(configs.frame_dir).mkdir(parents=True, exist_ok=True)
 
     configs.device = torch.device(f'cuda:{configs.gpu_idx}')
 

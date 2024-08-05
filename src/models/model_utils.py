@@ -10,7 +10,7 @@
 """
 
 import sys
-import os
+from pathlib import Path
 
 import torch
 
@@ -81,7 +81,7 @@ def load_weights_local_stage(pretrained_dict):
 
 def load_pretrained_model(model, pretrained_path, gpu_idx, overwrite_global_2_local):
     """Load weights from the pretrained model"""
-    assert os.path.isfile(pretrained_path), f"=> no checkpoint found at '{pretrained_path}'"
+    assert Path(pretrained_path).is_file(), f"=> no checkpoint found at '{pretrained_path}'"
     if gpu_idx is None:
         checkpoint = torch.load(pretrained_path, map_location='cpu')
     else:
@@ -116,7 +116,7 @@ def load_pretrained_model(model, pretrained_path, gpu_idx, overwrite_global_2_lo
 
 def resume_model(resume_path, arch, gpu_idx):
     """Resume training model from the previous trained checkpoint"""
-    assert os.path.isfile(resume_path), f"=> no checkpoint found at '{resume_path}'"
+    assert Path(resume_path).is_file(), f"=> no checkpoint found at '{resume_path}'"
     if gpu_idx is None:
         checkpoint = torch.load(resume_path, map_location='cpu')
     else:
