@@ -2,6 +2,7 @@ import time
 import sys
 import os
 import warnings
+from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -92,7 +93,7 @@ def test(test_loader, model, configs):
     with torch.no_grad():
         start_time = time.time()
         for batch_idx, (resized_imgs, org_ball_pos_xy, global_ball_pos_xy, target_events, target_seg) in enumerate(
-            tqdm(test_loader)):
+                tqdm(test_loader)):
 
             print(f'\n===================== batch_idx: {batch_idx} ================================')
 
@@ -126,7 +127,8 @@ def test(test_loader, model, configs):
                           (sample_prediction_ball_global_xy[1] - sample_global_ball_pos_xy[1]) ** 2
                     mse_global.update(mse)
 
-                print(f'\nBall Detection - \t Global stage: \t (x, y) - gt = ({sample_global_ball_pos_xy[0]}, {sample_global_ball_pos_xy[1]}), prediction = ({sample_prediction_ball_global_xy[0]}, {sample_prediction_ball_global_xy[1]})')
+                print(
+                    f'\nBall Detection - \t Global stage: \t (x, y) - gt = ({sample_global_ball_pos_xy[0]}, {sample_global_ball_pos_xy[1]}), prediction = ({sample_prediction_ball_global_xy[0]}, {sample_prediction_ball_global_xy[1]})')
 
                 sample_pred_org_x = sample_prediction_ball_global_xy[0] * (w_original / w)
                 sample_pred_org_y = sample_prediction_ball_global_xy[1] * (h_original / h)
@@ -149,9 +151,11 @@ def test(test_loader, model, configs):
                         sample_pred_org_x += sample_prediction_ball_local_xy[0] - w / 2
                         sample_pred_org_y += sample_prediction_ball_local_xy[1] - h / 2
 
-                    print(f'Ball Detection - \t Local stage: \t (x, y) - gt = ({sample_local_ball_pos_xy[0]}, {sample_local_ball_pos_xy[1]}), prediction = ({sample_prediction_ball_local_xy[0]}, {sample_prediction_ball_local_xy[1]})')
+                    print(
+                        f'Ball Detection - \t Local stage: \t (x, y) - gt = ({sample_local_ball_pos_xy[0]}, {sample_local_ball_pos_xy[1]}), prediction = ({sample_prediction_ball_local_xy[0]}, {sample_prediction_ball_local_xy[1]})')
 
-                print(f'Ball Detection - \t Overall: \t (x, y) - org: ({sample_org_ball_pos_xy[0]}, {sample_org_ball_pos_xy[1]}), prediction = ({int(sample_pred_org_x)}, {int(sample_pred_org_y)})')
+                print(
+                    f'Ball Detection - \t Overall: \t (x, y) - org: ({sample_org_ball_pos_xy[0]}, {sample_org_ball_pos_xy[1]}), prediction = ({int(sample_pred_org_x)}, {int(sample_pred_org_y)})')
                 mse = (sample_org_ball_pos_xy[0] - sample_pred_org_x) ** 2 + (
                         sample_org_ball_pos_xy[1] - sample_pred_org_y) ** 2
                 mse_overall.update(mse)
@@ -194,8 +198,8 @@ def test(test_loader, model, configs):
                         axes[2 * sample_idx].set_title(target_title)
                         axes[2 * sample_idx + 1].set_title(pred_title)
 
-                        plt.savefig(os.path.join(configs.saved_dir,
-                                                 f'batch_idx_{batch_idx}_sample_idx_{sample_idx}.jpg'))
+                        plt.savefig(Path(configs.saved_dir) /
+                                    f'batch_idx_{batch_idx}_sample_idx_{sample_idx}.jpg')
 
             if ((batch_idx + 1) % configs.print_freq) == 0:
                 print(

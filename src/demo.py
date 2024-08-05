@@ -12,6 +12,7 @@
 import os
 import sys
 from collections import deque
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -28,10 +29,10 @@ from utils.misc import time_synchronized
 
 def demo(configs):
     video_loader = TTNet_Video_Loader(configs.video_path, configs.input_size, configs.num_frames_sequence)
-    result_filename = os.path.join(configs.save_demo_dir, 'results.txt')
+    result_filename = Path(configs.save_demo_dir) / 'results.txt'
     frame_rate = video_loader.video_fps
     if configs.save_demo_output:
-        configs.frame_dir = os.path.join(configs.save_demo_dir, 'frame')
+        configs.frame_dir = Path(configs.save_demo_dir) / 'frame'
         if not os.path.isdir(configs.frame_dir):
             os.makedirs(configs.frame_dir)
 
@@ -82,7 +83,7 @@ def demo(configs):
                     cv2.imshow('ploted_img', ploted_img)
                     cv2.waitKey(10)
                 if configs.save_demo_output:
-                    cv2.imwrite(os.path.join(configs.frame_dir, f'{frame_idx:06d}.jpg'), ploted_img)
+                    cv2.imwrite(Path(configs.frame_dir) / f'{frame_idx:06d}.jpg', ploted_img)
 
             frame_pred_infor = {
                 'seg': prediction_seg,
@@ -94,8 +95,8 @@ def demo(configs):
             print(f'Done frame_idx {frame_idx} - time {t2 - t1:.3f}s')
 
     if configs.output_format == 'video':
-        output_video_path = os.path.join(configs.save_demo_dir, 'result.mp4')
-        cmd_str = f'ffmpeg -f image2 -i {os.path.join(configs.frame_dir)}/%05d.jpg -b 5000k -c:v mpeg4 {output_video_path}'
+        output_video_path = Path(configs.save_demo_dir) / 'result.mp4'
+        cmd_str = f'ffmpeg -f image2 -i {Path(configs.frame_dir)}/%05d.jpg -b 5000k -c:v mpeg4 {output_video_path}'
         os.system(cmd_str)
 
 

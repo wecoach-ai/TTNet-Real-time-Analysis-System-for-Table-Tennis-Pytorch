@@ -83,13 +83,13 @@ def get_events_infor(game_list, configs, dataset_type):
     # the paper mentioned 25, but used 9 frames only
     num_frames_from_event = int((configs.num_frames_sequence - 1) / 2)
 
-    annos_dir = os.path.join(configs.dataset_dir, dataset_type, 'annotations')
-    images_dir = os.path.join(configs.dataset_dir, dataset_type, 'images')
+    annos_dir = Path(configs.dataset_dir) / dataset_type / 'annotations'
+    images_dir = Path(configs.dataset_dir) / dataset_type / 'images'
     events_infor = []
     events_labels = []
     for game_name in game_list:
-        ball_annos_path = os.path.join(annos_dir, game_name, 'ball_markup.json')
-        events_annos_path = os.path.join(annos_dir, game_name, 'events_markup.json')
+        ball_annos_path = Path(annos_dir) / game_name / 'ball_markup.json'
+        events_annos_path = Path(annos_dir) / game_name / 'events_markup.json'
         # Load ball annotations
         json_ball = open(ball_annos_path)
         ball_annos = json.load(json_ball)

@@ -11,6 +11,7 @@
 
 import os
 from collections import deque
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -75,10 +76,10 @@ if __name__ == '__main__':
 
     configs = parse_configs()
 
-    video_path = os.path.join(configs.dataset_dir, 'test', 'videos', 'test_1.mp4')
+    video_path = Path(configs.dataset_dir) / 'test' / 'videos' / 'test_1.mp4'
     video_loader = TTNet_Video_Loader(video_path, input_size=(320, 128),
                                       num_frames_sequence=configs.num_frames_sequence)
-    out_images_dir = os.path.join(configs.results_dir, 'debug', 'ttnet_video_loader')
+    out_images_dir = Path(configs.results_dir) / 'debug'/ 'ttnet_video_loader'
     if not os.path.isdir(out_images_dir):
         os.makedirs(out_images_dir)
 
@@ -96,11 +97,11 @@ if __name__ == '__main__':
             img = resized_imgs[:, :, (i * 3): (i + 1) * 3]
             axes[i].imshow(img)
             axes[i].set_title(f'image {i}')
-        plt.savefig(os.path.join(out_images_dir, f'augment_all_imgs_{example_index}.jpg'))
+        plt.savefig(Path(out_images_dir) / f'augment_all_imgs_{example_index}.jpg')
 
         origin_imgs = cv2.resize(resized_imgs, (1920, 1080))
         for i in range(configs.num_frames_sequence):
             img = origin_imgs[:, :, (i * 3): (i + 1) * 3]
             axes[i].imshow(img)
             axes[i].set_title(f'image {i}')
-        plt.savefig(os.path.join(out_images_dir, f'org_all_imgs_{example_index}.jpg'))
+        plt.savefig(Path(out_images_dir) / f'org_all_imgs_{example_index}.jpg')

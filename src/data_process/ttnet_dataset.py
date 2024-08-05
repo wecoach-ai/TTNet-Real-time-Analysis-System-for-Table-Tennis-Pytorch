@@ -127,7 +127,7 @@ if __name__ == '__main__':
         origin_imgs = cv2.resize(resized_imgs, (1920, 1080))
         print(f'cv2.resize - origin_imgs shape: {origin_imgs.shape}')
 
-    out_images_dir = os.path.join(configs.results_dir, 'debug', 'ttnet_dataset')
+    out_images_dir = Path(configs.results_dir) / 'debug' / 'ttnet_dataset'
     if not os.path.isdir(out_images_dir):
         os.makedirs(out_images_dir)
 
@@ -152,7 +152,7 @@ if __name__ == '__main__':
             img = cv2.resize(img, (img.shape[1], img.shape[0]))
             ball_img = cv2.circle(img, tuple(global_ball_pos_xy), radius=5, color=(255, 0, 0), thickness=2)
             ball_img = cv2.cvtColor(ball_img, cv2.COLOR_RGB2BGR)
-            cv2.imwrite(os.path.join(out_images_dir, f'augment_img_{example_index}.jpg'),
+            cv2.imwrite(Path(out_images_dir) / f'augment_img_{example_index}.jpg',
                         ball_img)
 
         axes[i].imshow(img)
@@ -160,4 +160,4 @@ if __name__ == '__main__':
     fig.suptitle(
         f'Event: is bounce {target_event[0]}, is net: {target_event[1]}, ball_position_xy: (x= {global_ball_pos_xy[0]}, y= {global_ball_pos_xy[1]})',
         fontsize=16)
-    plt.savefig(os.path.join(out_images_dir, f'augment_all_imgs_{example_index}.jpg'))
+    plt.savefig(Path(out_images_dir) / f'augment_all_imgs_{example_index}.jpg')

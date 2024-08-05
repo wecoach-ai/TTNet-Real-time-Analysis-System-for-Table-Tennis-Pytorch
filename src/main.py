@@ -4,6 +4,7 @@ import sys
 import random
 import os
 import warnings
+from pathlib import Path
 
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -76,7 +77,7 @@ def main_worker(gpu_idx, configs):
         logger = Logger(configs.logs_dir, configs.saved_fn)
         logger.info('>>> Created a new logger')
         logger.info(f'>>> configs: {configs}')
-        tb_writer = SummaryWriter(log_dir=os.path.join(configs.logs_dir, 'tensorboard'))
+        tb_writer = SummaryWriter(log_dir=Path(configs.logs_dir) / 'tensorboard')
     else:
         logger = None
         tb_writer = None
