@@ -13,6 +13,7 @@ import os
 import json
 import sys
 from collections import Counter
+from pathlib import Path
 
 import cv2
 from sklearn.model_selection import train_test_split
@@ -108,7 +109,7 @@ def get_events_infor(game_list, configs, dataset_type):
                                                                  smooth_idx + num_frames_from_event + 1)]
                 img_path_list = []
                 for sub_smooth_idx in sub_smooth_frame_indices:
-                    img_path = os.path.join(images_dir, game_name, f'img_{sub_smooth_idx:06d}.jpg')
+                    img_path = Path(images_dir) / game_name / f'img_{sub_smooth_idx:06d}.jpg'
                     img_path_list.append(img_path)
                 last_f_idx = smooth_idx + num_frames_from_event
                 # Get ball position for the last frame in the sequence
@@ -122,7 +123,7 @@ def get_events_infor(game_list, configs, dataset_type):
                     continue
 
                 # Get segmentation path for the last frame in the sequence
-                seg_path = os.path.join(annos_dir, game_name, 'segmentation_masks', f'{last_f_idx}.png')
+                seg_path = Path(annos_dir) / game_name / 'segmentation_masks' / f'{last_f_idx}.png'
                 if not os.path.isfile(seg_path):
                     print(f"smooth_idx: {smooth_idx} - The segmentation path {seg_path} is invalid")
                     continue

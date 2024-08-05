@@ -15,6 +15,7 @@ import datetime
 import argparse
 from easydict import EasyDict as edict
 import sys
+from pathlib import Path
 
 sys.path.append('../')
 
@@ -248,9 +249,9 @@ def parse_configs():
     configs.use_best_checkpoint = True
 
     if configs.use_best_checkpoint:
-        configs.saved_weight_name = os.path.join(configs.checkpoints_dir, f'{configs.saved_fn}_best.pth')
+        configs.saved_weight_name = Path(configs.checkpoints_dir) / f'{configs.saved_fn}_best.pth'
     else:
-        configs.saved_weight_name = os.path.join(configs.checkpoints_dir, f'{configs.saved_fn}.pth')
+        configs.saved_weight_name = Path(configs.checkpoints_dir) / f'{configs.saved_fn}.pth'
 
     configs.results_dir = os.path.join(configs.working_dir, 'results')
 

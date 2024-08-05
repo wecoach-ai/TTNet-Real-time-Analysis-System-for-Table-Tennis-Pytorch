@@ -13,6 +13,7 @@ import sys
 import os
 import numpy as np
 import time
+from pathlib import Path
 
 from torch.utils.data import Dataset
 from turbojpeg import TurboJPEG
@@ -140,11 +141,11 @@ if __name__ == '__main__':
     fig.suptitle(
         f'Event: is bounce {target_event[0]}, is net: {target_event[1]}, ball_position_xy: (x= {org_ball_pos_xy[0]}, y= {org_ball_pos_xy[1]})',
         fontsize=16)
-    plt.savefig(os.path.join(out_images_dir, f'org_all_imgs_{example_index}.jpg'))
+    plt.savefig(Path(out_images_dir) / f'org_all_imgs_{example_index}.jpg')
     target_seg = target_seg.transpose(1, 2, 0)
     print(f'target_seg shape: {target_seg.shape}')
 
-    plt.imsave(os.path.join(out_images_dir, f'augment_seg_img_{example_index}.jpg'), target_seg)
+    plt.imsave(Path(out_images_dir) / f'augment_seg_img_{example_index}.jpg', target_seg)
     for i in range(configs.num_frames_sequence):
         img = resized_imgs[:, :, (i * 3): (i + 1) * 3]
         if (i == (configs.num_frames_sequence - 1)):
