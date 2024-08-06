@@ -4,7 +4,7 @@ import time
 
 def make_folder(folder_name):
     if not Path(folder_name).exists():
-        Path(folder_name).mkdir(parents=True, exist_ok=True)
+        folder_name.mkdir(parents=True, exist_ok=True)
 
 
 class AverageMeter(object):

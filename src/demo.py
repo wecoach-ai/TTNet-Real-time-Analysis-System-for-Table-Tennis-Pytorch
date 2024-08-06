@@ -33,8 +33,8 @@ def demo(configs):
     frame_rate = video_loader.video_fps
     if configs.save_demo_output:
         configs.frame_dir = Path(configs.save_demo_dir) / 'frame'
-        if not Path(configs.frame_dir).is_dir():
-            Path(configs.frame_dir).mkdir(parents=True, exist_ok=True)
+        if not configs.frame_dir.is_dir():
+            configs.frame_dir.mkdir(parents=True, exist_ok=True)
 
     configs.device = torch.device(f'cuda:{configs.gpu_idx}')
 
@@ -83,7 +83,7 @@ def demo(configs):
                     cv2.imshow('ploted_img', ploted_img)
                     cv2.waitKey(10)
                 if configs.save_demo_output:
-                    cv2.imwrite(Path(configs.frame_dir) / f'{frame_idx:06d}.jpg', ploted_img)
+                    cv2.imwrite(configs.frame_dir / f'{frame_idx:06d}.jpg', ploted_img)
 
             frame_pred_infor = {
                 'seg': prediction_seg,
@@ -96,7 +96,7 @@ def demo(configs):
 
     if configs.output_format == 'video':
         output_video_path = Path(configs.save_demo_dir) / 'result.mp4'
-        cmd_str = f'ffmpeg -f image2 -i {Path(configs.frame_dir)}/%05d.jpg -b 5000k -c:v mpeg4 {output_video_path}'
+        cmd_str = f'ffmpeg -f image2 -i {configs.frame_dir}/%05d.jpg -b 5000k -c:v mpeg4 {output_video_path}'
         os.system(cmd_str)
 
 

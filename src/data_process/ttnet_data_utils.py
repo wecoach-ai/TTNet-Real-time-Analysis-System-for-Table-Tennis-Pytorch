@@ -123,7 +123,7 @@ def get_events_infor(game_list, configs, dataset_type):
 
                 # Get segmentation path for the last frame in the sequence
                 seg_path = Path(annos_dir) / game_name / 'segmentation_masks' / f'{last_f_idx}.png'
-                if not Path(seg_path).is_file():
+                if not seg_path.is_file():
                     print(f"smooth_idx: {smooth_idx} - The segmentation path {seg_path} is invalid")
                     continue
                 event_class = configs.events_dict[event_name]

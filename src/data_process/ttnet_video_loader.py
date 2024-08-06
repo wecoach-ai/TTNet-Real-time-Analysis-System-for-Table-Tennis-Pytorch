@@ -79,8 +79,8 @@ if __name__ == '__main__':
     video_loader = TTNet_Video_Loader(video_path, input_size=(320, 128),
                                       num_frames_sequence=configs.num_frames_sequence)
     out_images_dir = Path(configs.results_dir) / 'debug'/ 'ttnet_video_loader'
-    if not Path(out_images_dir).is_dir():
-        Path(out_images_dir).mkdir(parents=True, exist_ok=True)
+    if not out_images_dir.is_dir():
+        out_images_dir.mkdir(parents=True, exist_ok=True)
 
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(20, 20))
     axes = axes.ravel()
@@ -96,11 +96,11 @@ if __name__ == '__main__':
             img = resized_imgs[:, :, (i * 3): (i + 1) * 3]
             axes[i].imshow(img)
             axes[i].set_title(f'image {i}')
-        plt.savefig(Path(out_images_dir) / f'augment_all_imgs_{example_index}.jpg')
+        plt.savefig(out_images_dir / f'augment_all_imgs_{example_index}.jpg')
 
         origin_imgs = cv2.resize(resized_imgs, (1920, 1080))
         for i in range(configs.num_frames_sequence):
             img = origin_imgs[:, :, (i * 3): (i + 1) * 3]
             axes[i].imshow(img)
             axes[i].set_title(f'image {i}')
-        plt.savefig(Path(out_images_dir) / f'org_all_imgs_{example_index}.jpg')
+        plt.savefig(out_images_dir / f'org_all_imgs_{example_index}.jpg')
