@@ -322,10 +322,10 @@ if __name__ == '__main__':
     pred_ball_global, pred_ball_local, pred_events, pred_seg, local_ball_pos_xy = ttnet(resize_batch_input,
                                                                                         org_ball_pos_xy)
     if pred_ball_global is not None:
-        print('pred_ball_global: {}'.format(pred_ball_global.size()))
+        print(f'pred_ball_global: {pred_ball_global.size()}')
     if pred_ball_local is not None:
-        print('pred_ball_local: {}'.format(pred_ball_local.size()))
+        print(f'pred_ball_local: {pred_ball_local.size()}')
     if pred_events is not None:
-        print('pred_events: {}'.format(pred_events.size()))
+        print(f'pred_events: {pred_events.size()}')
     if pred_seg is not None:
-        print('pred_segmentation: {}'.format(pred_seg.size()))
+        print(f'pred_segmentation: {pred_seg.size()}')

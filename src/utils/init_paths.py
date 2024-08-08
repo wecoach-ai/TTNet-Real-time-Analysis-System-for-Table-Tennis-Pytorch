@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import sys
 
 
@@ -13,5 +14,4 @@ class InitPaths():
     def add_lib(self, libs_list):
         # Add lib to PYTHONPATH
         for lib in libs_list:
-            lib_path = os.path.join(self.this_dir, lib)
-            self.add_path(lib_path)
+            self.add_path(Path(self.this_dir) / lib)

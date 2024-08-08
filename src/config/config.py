@@ -10,11 +10,11 @@
 """
 
 import torch
-import os
 import datetime
 import argparse
 from easydict import EasyDict as edict
 import sys
+from pathlib import Path
 
 sys.path.append('../')
 
@@ -189,7 +189,7 @@ def parse_configs():
     ####################################################################
     ##############     Data configs            ###################
     ####################################################################
-    configs.dataset_dir = os.path.join(configs.working_dir, 'dataset')
+    configs.dataset_dir = Path(configs.working_dir) / 'dataset'
     configs.train_game_list = ['game_1', 'game_2', 'game_3', 'game_4', 'game_5']
     configs.test_game_list = ['test_1', 'test_2', 'test_3', 'test_4', 'test_5', 'test_6', 'test_7']
     configs.events_dict = {
@@ -243,27 +243,27 @@ def parse_configs():
     ####################################################################
     ############## logs, Checkpoints, and results dir ########################
     ####################################################################
-    configs.checkpoints_dir = os.path.join(configs.working_dir, 'checkpoints', configs.saved_fn)
-    configs.logs_dir = os.path.join(configs.working_dir, 'logs', configs.saved_fn)
+    configs.checkpoints_dir = Path(configs.working_dir) / 'checkpoints' / configs.saved_fn
+    configs.logs_dir = Path(configs.working_dir) / 'logs' / configs.saved_fn
     configs.use_best_checkpoint = True
 
     if configs.use_best_checkpoint:
-        configs.saved_weight_name = os.path.join(configs.checkpoints_dir, '{}_best.pth'.format(configs.saved_fn))
+        configs.saved_weight_name = Path(configs.checkpoints_dir) / f'{configs.saved_fn}_best.pth'
     else:
-        configs.saved_weight_name = os.path.join(configs.checkpoints_dir, '{}.pth'.format(configs.saved_fn))
+        configs.saved_weight_name = Path(configs.checkpoints_dir) / f'{configs.saved_fn}.pth'
 
-    configs.results_dir = os.path.join(configs.working_dir, 'results')
+    configs.results_dir = Path(configs.working_dir) / 'results'
 
     make_folder(configs.checkpoints_dir)
     make_folder(configs.logs_dir)
     make_folder(configs.results_dir)
 
     if configs.save_test_output:
-        configs.saved_dir = os.path.join(configs.results_dir, configs.saved_fn)
+        configs.saved_dir = Path(configs.results_dir) / configs.saved_fn
         make_folder(configs.saved_dir)
 
     if configs.save_demo_output:
-        configs.save_demo_dir = os.path.join(configs.results_dir, 'demo', configs.saved_fn)
+        configs.save_demo_dir = Path(configs.results_dir) / 'demo' / configs.saved_fn
         make_folder(configs.save_demo_dir)
 
     return configs

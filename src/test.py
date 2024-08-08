@@ -2,6 +2,7 @@ import time
 import sys
 import os
 import warnings
+from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -44,8 +45,8 @@ def main_worker(gpu_idx, configs):
     configs.gpu_idx = gpu_idx
 
     if configs.gpu_idx is not None:
-        print("Use GPU: {} for training".format(configs.gpu_idx))
-        configs.device = torch.device('cuda:{}'.format(configs.gpu_idx))
+        print(f"Use GPU: {configs.gpu_idx} for training")
+        configs.device = torch.device(f'cuda:{configs.gpu_idx}')
 
     if configs.distributed:
         if configs.dist_url == "env://" and configs.rank == -1:
@@ -65,7 +66,7 @@ def main_worker(gpu_idx, configs):
 
     if configs.is_master_node:
         num_parameters = get_num_parameters(model)
-        print('number of trained parameters of the model: {}'.format(num_parameters))
+        print(f'number of trained parameters of the model: {num_parameters}')
 
     if configs.pretrained_path is not None:
         model = load_pretrained_model(model, configs.pretrained_path, gpu_idx, configs.overwrite_global_2_local)
@@ -92,9 +93,9 @@ def test(test_loader, model, configs):
     with torch.no_grad():
         start_time = time.time()
         for batch_idx, (resized_imgs, org_ball_pos_xy, global_ball_pos_xy, target_events, target_seg) in enumerate(
-            tqdm(test_loader)):
+                tqdm(test_loader)):
 
-            print('\n===================== batch_idx: {} ================================'.format(batch_idx))
+            print(f'\n===================== batch_idx: {batch_idx} ================================')
 
             data_time.update(time.time() - start_time)
             batch_size = resized_imgs.size(0)
@@ -126,9 +127,8 @@ def test(test_loader, model, configs):
                           (sample_prediction_ball_global_xy[1] - sample_global_ball_pos_xy[1]) ** 2
                     mse_global.update(mse)
 
-                print('\nBall Detection - \t Global stage: \t (x, y) - gt = ({}, {}), prediction = ({}, {})'.format(
-                    sample_global_ball_pos_xy[0], sample_global_ball_pos_xy[1], sample_prediction_ball_global_xy[0],
-                    sample_prediction_ball_global_xy[1]))
+                print(
+                    f'\nBall Detection - \t Global stage: \t (x, y) - gt = ({sample_global_ball_pos_xy[0]}, {sample_global_ball_pos_xy[1]}), prediction = ({sample_prediction_ball_global_xy[0]}, {sample_prediction_ball_global_xy[1]})')
 
                 sample_pred_org_x = sample_prediction_ball_global_xy[0] * (w_original / w)
                 sample_pred_org_y = sample_prediction_ball_global_xy[1] * (h_original / h)
@@ -151,13 +151,11 @@ def test(test_loader, model, configs):
                         sample_pred_org_x += sample_prediction_ball_local_xy[0] - w / 2
                         sample_pred_org_y += sample_prediction_ball_local_xy[1] - h / 2
 
-                    print('Ball Detection - \t Local stage: \t (x, y) - gt = ({}, {}), prediction = ({}, {})'.format(
-                        sample_local_ball_pos_xy[0], sample_local_ball_pos_xy[1], sample_prediction_ball_local_xy[0],
-                        sample_prediction_ball_local_xy[1]))
+                    print(
+                        f'Ball Detection - \t Local stage: \t (x, y) - gt = ({sample_local_ball_pos_xy[0]}, {sample_local_ball_pos_xy[1]}), prediction = ({sample_prediction_ball_local_xy[0]}, {sample_prediction_ball_local_xy[1]})')
 
-                print('Ball Detection - \t Overall: \t (x, y) - org: ({}, {}), prediction = ({}, {})'.format(
-                    sample_org_ball_pos_xy[0], sample_org_ball_pos_xy[1], int(sample_pred_org_x),
-                    int(sample_pred_org_y)))
+                print(
+                    f'Ball Detection - \t Overall: \t (x, y) - org: ({sample_org_ball_pos_xy[0]}, {sample_org_ball_pos_xy[1]}), prediction = ({int(sample_pred_org_x)}, {int(sample_pred_org_y)})')
                 mse = (sample_org_ball_pos_xy[0] - sample_pred_org_x) ** 2 + (
                         sample_org_ball_pos_xy[1] - sample_pred_org_y) ** 2
                 mse_overall.update(mse)
@@ -167,9 +165,7 @@ def test(test_loader, model, configs):
                     sample_target_events = target_events[sample_idx].numpy()
                     sample_prediction_events = prediction_get_events(pred_events[sample_idx], configs.event_thresh)
                     print(
-                        'Event Spotting - \t gt = (is bounce: {}, is net: {}), prediction: (is bounce: {:.4f}, is net: {:.4f})'.format(
-                            sample_target_events[0], sample_target_events[1], pred_events[sample_idx][0],
-                            pred_events[sample_idx][1]))
+                        f'Event Spotting - \t gt = (is bounce: {sample_target_events[0]}, is net: {sample_target_events[1]}), prediction: (is bounce: {pred_events[sample_idx][0]:.4f}, is net: {pred_events[sample_idx][1]:.4f})')
                     # Compute metrics
                     spce.update(SPCE(sample_prediction_events, sample_target_events, thresh=0.5))
                     pce.update(PCE(sample_prediction_events, sample_target_events))
@@ -184,7 +180,7 @@ def test(test_loader, model, configs):
                             np.sum(sample_target_seg) + np.sum(sample_prediction_seg) + 1e-9)
                     iou_seg.update(iou)
 
-                    print('Segmentation - \t \t IoU = {:.4f}'.format(iou))
+                    print(f'Segmentation - \t \t IoU = {iou:.4f}')
 
                     if configs.save_test_output:
                         fig, axes = plt.subplots(nrows=batch_size, ncols=2, figsize=(10, 5))
@@ -196,28 +192,24 @@ def test(test_loader, model, configs):
                         target_title = 'target seg'
                         pred_title = 'pred seg'
                         if pred_events is not None:
-                            target_title += ', is bounce: {}, is net: {}'.format(sample_target_events[0],
-                                                                                 sample_target_events[1])
-                            pred_title += ', is bounce: {}, is net: {}'.format(sample_prediction_events[0],
-                                                                               sample_prediction_events[1])
+                            target_title += f', is bounce: {sample_target_events[0]}, is net: {sample_target_events[1]}'
+                            pred_title += f', is bounce: {sample_prediction_events[0]}, is net: {sample_prediction_events[1]}'
 
                         axes[2 * sample_idx].set_title(target_title)
                         axes[2 * sample_idx + 1].set_title(pred_title)
 
-                        plt.savefig(os.path.join(configs.saved_dir,
-                                                 'batch_idx_{}_sample_idx_{}.jpg'.format(batch_idx, sample_idx)))
+                        plt.savefig(Path(configs.saved_dir) /
+                                    f'batch_idx_{batch_idx}_sample_idx_{sample_idx}.jpg')
 
             if ((batch_idx + 1) % configs.print_freq) == 0:
                 print(
-                    'batch_idx: {} - Average iou_seg: {:.4f}, mse_global: {:.1f}, mse_local: {:.1f}, mse_overall: {:.1f}, pce: {:.4f} spce: {:.4f}'.format(
-                        batch_idx, iou_seg.avg, mse_global.avg, mse_local.avg, mse_overall.avg, pce.avg, spce.avg))
+                    f'batch_idx: {batch_idx} - Average iou_seg: {iou_seg.avg:.4f}, mse_global: {mse_global.avg:.1f}, mse_local: {mse_local.avg:.1f}, mse_overall: {mse_overall.avg:.1f}, pce: {pce.avg:.4f} spce: {spce.avg:.4f}')
 
             batch_time.update(time.time() - start_time)
             start_time = time.time()
 
     print(
-        'Average iou_seg: {:.4f}, mse_global: {:.1f}, mse_local: {:.1f}, mse_overall: {:.1f}, pce: {:.4f} spce: {:.4f}'.format(
-            iou_seg.avg, mse_global.avg, mse_local.avg, mse_overall.avg, pce.avg, spce.avg))
+        f'Average iou_seg: {iou_seg.avg:.4f}, mse_global: {mse_global.avg:.1f}, mse_local: {mse_local.avg:.1f}, mse_overall: {mse_overall.avg:.1f}, pce: {pce.avg:.4f} spce: {spce.avg:.4f}')
     print('Done testing')
 
 

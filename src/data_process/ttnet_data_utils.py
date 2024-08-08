@@ -9,10 +9,10 @@
 # Description: utils for TTNet dataset
 """
 
-import os
 import json
 import sys
 from collections import Counter
+from pathlib import Path
 
 import cv2
 from sklearn.model_selection import train_test_split
@@ -82,13 +82,13 @@ def get_events_infor(game_list, configs, dataset_type):
     # the paper mentioned 25, but used 9 frames only
     num_frames_from_event = int((configs.num_frames_sequence - 1) / 2)
 
-    annos_dir = os.path.join(configs.dataset_dir, dataset_type, 'annotations')
-    images_dir = os.path.join(configs.dataset_dir, dataset_type, 'images')
+    annos_dir = Path(configs.dataset_dir) / dataset_type / 'annotations'
+    images_dir = Path(configs.dataset_dir) / dataset_type / 'images'
     events_infor = []
     events_labels = []
     for game_name in game_list:
-        ball_annos_path = os.path.join(annos_dir, game_name, 'ball_markup.json')
-        events_annos_path = os.path.join(annos_dir, game_name, 'events_markup.json')
+        ball_annos_path = Path(annos_dir) / game_name / 'ball_markup.json'
+        events_annos_path = Path(annos_dir) / game_name / 'events_markup.json'
         # Load ball annotations
         json_ball = open(ball_annos_path)
         ball_annos = json.load(json_ball)
@@ -108,23 +108,23 @@ def get_events_infor(game_list, configs, dataset_type):
                                                                  smooth_idx + num_frames_from_event + 1)]
                 img_path_list = []
                 for sub_smooth_idx in sub_smooth_frame_indices:
-                    img_path = os.path.join(images_dir, game_name, 'img_{:06d}.jpg'.format(sub_smooth_idx))
+                    img_path = Path(images_dir) / game_name / f'img_{sub_smooth_idx:06d}.jpg'
                     img_path_list.append(img_path)
                 last_f_idx = smooth_idx + num_frames_from_event
                 # Get ball position for the last frame in the sequence
-                if '{}'.format(last_f_idx) not in ball_annos.keys():
-                    print('smooth_idx: {} - no ball position for the frame idx {}'.format(smooth_idx, last_f_idx))
+                if f'{last_f_idx}' not in ball_annos.keys():
+                    print(f'smooth_idx: {smooth_idx} - no ball position for the frame idx {last_f_idx}')
                     continue
-                ball_position_xy = ball_annos['{}'.format(last_f_idx)]
+                ball_position_xy = ball_annos[f'{last_f_idx}']
                 ball_position_xy = np.array([ball_position_xy['x'], ball_position_xy['y']], dtype=np.int)
                 # Ignore the event without ball information
                 if (ball_position_xy[0] < 0) or (ball_position_xy[1] < 0):
                     continue
 
                 # Get segmentation path for the last frame in the sequence
-                seg_path = os.path.join(annos_dir, game_name, 'segmentation_masks', '{}.png'.format(last_f_idx))
-                if not os.path.isfile(seg_path):
-                    print("smooth_idx: {} - The segmentation path {} is invalid".format(smooth_idx, seg_path))
+                seg_path = Path(annos_dir) / game_name / 'segmentation_masks' / f'{last_f_idx}.png'
+                if not seg_path.is_file():
+                    print(f"smooth_idx: {smooth_idx} - The segmentation path {seg_path} is invalid")
                     continue
                 event_class = configs.events_dict[event_name]
 
@@ -161,9 +161,9 @@ if __name__ == '__main__':
 
     configs = parse_configs()
     train_events_infor, val_events_infor, train_events_labels, val_events_labels = train_val_data_separation(configs)
-    print('Counter train_events_labels: {}'.format(Counter(train_events_labels)))
+    print(f'Counter train_events_labels: {Counter(train_events_labels)}')
     if val_events_labels is not None:
-        print('Counter val_events_labels: {}'.format(Counter(val_events_labels)))
+        print(f'Counter val_events_labels: {Counter(val_events_labels)}')
     event_name = 'net'
     event_class = configs.events_dict[event_name]
     configs.device = torch.device('cpu')
@@ -175,5 +175,5 @@ if __name__ == '__main__':
     max_val_y = (target_ball_position[320:]).max()
     target_ball_g_x = np.argmax(target_ball_position[:320])
     target_ball_g_y = np.argmax(target_ball_position[320:])
-    print('max_val_x: {}, max_val_y: {}'.format(max_val_x, max_val_y))
-    print('target_ball_g_x: {}, target_ball_g_x: {}'.format(target_ball_g_x, target_ball_g_y))
+    print(f'max_val_x: {max_val_x}, max_val_y: {max_val_y}')
+    print(f'target_ball_g_x: {target_ball_g_x}, target_ball_g_y: {target_ball_g_y}')

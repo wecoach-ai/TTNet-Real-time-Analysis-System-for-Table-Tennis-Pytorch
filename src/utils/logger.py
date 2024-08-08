@@ -1,5 +1,5 @@
-import os
 import logging
+from pathlib import Path
 
 
 class Logger():
@@ -14,8 +14,7 @@ class Logger():
         """
 
     def __init__(self, logs_dir, saved_fn):
-        logger_fn = 'logger_{}.txt'.format(saved_fn)
-        logger_path = os.path.join(logs_dir, logger_fn)
+        logger_path = Path(logs_dir) / f'logger_{saved_fn}.txt'
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)

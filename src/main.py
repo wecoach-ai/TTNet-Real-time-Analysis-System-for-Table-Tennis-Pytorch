@@ -4,6 +4,7 @@ import sys
 import random
 import os
 import warnings
+from pathlib import Path
 
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -55,8 +56,8 @@ def main_worker(gpu_idx, configs):
     configs.gpu_idx = gpu_idx
 
     if configs.gpu_idx is not None:
-        print("Use GPU: {} for training".format(configs.gpu_idx))
-        configs.device = torch.device('cuda:{}'.format(configs.gpu_idx))
+        print(f"Use GPU: {configs.gpu_idx} for training")
+        configs.device = torch.device(f'cuda:{configs.gpu_idx}')
 
     if configs.distributed:
         if configs.dist_url == "env://" and configs.rank == -1:
@@ -75,8 +76,8 @@ def main_worker(gpu_idx, configs):
     if configs.is_master_node:
         logger = Logger(configs.logs_dir, configs.saved_fn)
         logger.info('>>> Created a new logger')
-        logger.info('>>> configs: {}'.format(configs))
-        tb_writer = SummaryWriter(log_dir=os.path.join(configs.logs_dir, 'tensorboard'))
+        logger.info(f'>>> configs: {configs}')
+        tb_writer = SummaryWriter(log_dir=Path(configs.logs_dir) / 'tensorboard')
     else:
         logger = None
         tb_writer = None
@@ -92,7 +93,7 @@ def main_worker(gpu_idx, configs):
 
     if configs.is_master_node:
         num_parameters = get_num_parameters(model)
-        logger.info('number of trained parameters of the model: {}'.format(num_parameters))
+        logger.info(f'number of trained parameters of the model: {num_parameters}')
 
     optimizer = create_optimizer(configs, model)
     lr_scheduler = create_lr_scheduler(optimizer, configs)
@@ -104,7 +105,7 @@ def main_worker(gpu_idx, configs):
     if configs.pretrained_path is not None:
         model = load_pretrained_model(model, configs.pretrained_path, gpu_idx, configs.overwrite_global_2_local)
         if logger is not None:
-            logger.info('loaded pretrained model at {}'.format(configs.pretrained_path))
+            logger.info(f'loaded pretrained model at {configs.pretrained_path}')
 
     # optionally resume from a checkpoint
     if configs.resume_path is not None:
@@ -125,15 +126,15 @@ def main_worker(gpu_idx, configs):
     train_loader, val_loader, train_sampler = create_train_val_dataloader(configs)
     test_loader = create_test_dataloader(configs)
     if logger is not None:
-        logger.info('number of batches in train set: {}'.format(len(train_loader)))
+        logger.info(f'number of batches in train set: {len(train_loader)}')
         if val_loader is not None:
-            logger.info('number of batches in val set: {}'.format(len(val_loader)))
-        logger.info('number of batches in test set: {}'.format(len(test_loader)))
+            logger.info(f'number of batches in val set: {len(val_loader)}')
+        logger.info(f'number of batches in test set: {len(test_loader)}')
 
     if configs.evaluate:
         assert val_loader is not None, "The validation should not be None"
         val_loss = evaluate_one_epoch(val_loader, model, configs.start_epoch - 1, configs, logger)
-        print('Evaluate, val_loss: {}'.format(val_loss))
+        print(f'Evaluate, val_loss: {val_loss}')
         return
 
     for epoch in range(configs.start_epoch, configs.num_epochs + 1):
@@ -141,10 +142,10 @@ def main_worker(gpu_idx, configs):
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
         if logger is not None:
-            logger.info('{}'.format('*-' * 40))
-            logger.info('{} {}/{} {}'.format('=' * 35, epoch, configs.num_epochs, '=' * 35))
-            logger.info('{}'.format('*-' * 40))
-            logger.info('>>> Epoch: [{}/{}] learning rate: {:.2e}'.format(epoch, configs.num_epochs, lr))
+            logger.info(f'{'*-' * 40}')
+            logger.info(f'{'=' * 35} {epoch}/{configs.num_epochs} {'=' * 35}')
+            logger.info(f'{'*-' * 40}')
+            logger.info(f'>>> Epoch: [{epoch}/{configs.num_epochs}] learning rate: {lr:.2e}')
 
         if configs.distributed:
             train_sampler.set_epoch(epoch)
@@ -171,12 +172,12 @@ def main_worker(gpu_idx, configs):
         # Check early stop training
         if configs.earlystop_patience is not None:
             earlystop_count = 0 if is_best else (earlystop_count + 1)
-            print_string = ' |||\t earlystop_count: {}'.format(earlystop_count)
+            print_string = f' |||\t earlystop_count: {earlystop_count}'
             if configs.earlystop_patience <= earlystop_count:
                 print_string += '\n\t--- Early stopping!!!'
                 break
             else:
-                print_string += '\n\t--- Continue training..., earlystop_count: {}'.format(earlystop_count)
+                print_string += f'\n\t--- Continue training..., earlystop_count: {earlystop_count}'
             if logger is not None:
                 logger.info(print_string)
         # Adjust learning rate
@@ -202,7 +203,7 @@ def train_one_epoch(train_loader, model, optimizer, epoch, configs, logger):
     losses = AverageMeter('Loss', ':.4e')
 
     progress = ProgressMeter(len(train_loader), [batch_time, data_time, losses],
-                             prefix="Train - Epoch: [{}/{}]".format(epoch, configs.num_epochs))
+                             prefix=f"Train - Epoch: [{epoch}/{configs.num_epochs}]")
 
     # switch to train mode
     model.train()
@@ -250,7 +251,7 @@ def evaluate_one_epoch(val_loader, model, epoch, configs, logger):
     losses = AverageMeter('Loss', ':.4e')
 
     progress = ProgressMeter(len(val_loader), [batch_time, data_time, losses],
-                             prefix="Evaluate - Epoch: [{}/{}]".format(epoch, configs.num_epochs))
+                             prefix=f"Evaluate - Epoch: [{epoch}/{configs.num_epochs}]")
     # switch to evaluate mode
     model.eval()
     with torch.no_grad():

@@ -12,6 +12,7 @@
 import os
 import sys
 from collections import deque
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -28,14 +29,14 @@ from utils.misc import time_synchronized
 
 def demo(configs):
     video_loader = TTNet_Video_Loader(configs.video_path, configs.input_size, configs.num_frames_sequence)
-    result_filename = os.path.join(configs.save_demo_dir, 'results.txt')
+    result_filename = Path(configs.save_demo_dir) / 'results.txt'
     frame_rate = video_loader.video_fps
     if configs.save_demo_output:
-        configs.frame_dir = os.path.join(configs.save_demo_dir, 'frame')
-        if not os.path.isdir(configs.frame_dir):
-            os.makedirs(configs.frame_dir)
+        configs.frame_dir = Path(configs.save_demo_dir) / 'frame'
+        if not configs.frame_dir.is_dir():
+            configs.frame_dir.mkdir(parents=True, exist_ok=True)
 
-    configs.device = torch.device('cuda:{}'.format(configs.gpu_idx))
+    configs.device = torch.device(f'cuda:{configs.gpu_idx}')
 
     # model
     model = create_model(configs)
@@ -82,7 +83,7 @@ def demo(configs):
                     cv2.imshow('ploted_img', ploted_img)
                     cv2.waitKey(10)
                 if configs.save_demo_output:
-                    cv2.imwrite(os.path.join(configs.frame_dir, '{:06d}.jpg'.format(frame_idx)), ploted_img)
+                    cv2.imwrite(configs.frame_dir / f'{frame_idx:06d}.jpg', ploted_img)
 
             frame_pred_infor = {
                 'seg': prediction_seg,
@@ -91,12 +92,11 @@ def demo(configs):
             queue_frames.append(frame_pred_infor)
 
             frame_idx += 1
-            print('Done frame_idx {} - time {:.3f}s'.format(frame_idx, t2 - t1))
+            print(f'Done frame_idx {frame_idx} - time {t2 - t1:.3f}s')
 
     if configs.output_format == 'video':
-        output_video_path = os.path.join(configs.save_demo_dir, 'result.mp4')
-        cmd_str = 'ffmpeg -f image2 -i {}/%05d.jpg -b 5000k -c:v mpeg4 {}'.format(
-            os.path.join(configs.frame_dir), output_video_path)
+        output_video_path = Path(configs.save_demo_dir) / 'result.mp4'
+        cmd_str = f'ffmpeg -f image2 -i {configs.frame_dir}/%05d.jpg -b 5000k -c:v mpeg4 {output_video_path}'
         os.system(cmd_str)
 
 
@@ -104,7 +104,7 @@ def plot_detection(img, ball_pos, seg_img, events):
     """Show the predicted information in the image"""
     img = cv2.addWeighted(img, 1., seg_img * 255, 0.3, 0)
     img = cv2.circle(img, tuple(ball_pos), 5, (255, 0, 255), -1)
-    event_name = 'is bounce: {:.2f}, is net: {:.2f}'.format(events[0], events[1])
+    event_name = f'is bounce: {events[0]:.2f}, is net: {events[1]:.2f}'
     img = cv2.putText(img, event_name, (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
     return img
