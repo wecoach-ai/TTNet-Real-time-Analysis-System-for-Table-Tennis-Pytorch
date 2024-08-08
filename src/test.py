@@ -172,7 +172,7 @@ def test(test_loader, model, configs):
 
                 # Process segmentation stage
                 if pred_seg is not None:
-                    sample_target_seg = target_seg[sample_idx].transpose(1, 2, 0).astype(np.int)
+                    sample_target_seg = target_seg[sample_idx].transpose(1, 2, 0).astype(int)
                     sample_prediction_seg = get_prediction_seg(pred_seg[sample_idx], configs.seg_thresh)
 
                     # Calculate the IoU
