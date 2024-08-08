@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.append('../')
 
-from utils.misc import make_folder
+from src.utils.misc import make_folder
 
 
 def parse_configs():
@@ -53,6 +53,8 @@ def parse_configs():
     ####################################################################
     parser.add_argument('--working-dir', type=str, default='../../', metavar='PATH',
                         help='the ROOT working directory')
+    parser.add_argument('--dataset-dir', type=str, metavar='PATH',
+                        help='the path of dataset directory')
     parser.add_argument('--no-val', action='store_true',
                         help='If true, use all data for training, no validation set')
     parser.add_argument('--no-test', action='store_true',
@@ -189,7 +191,7 @@ def parse_configs():
     ####################################################################
     ##############     Data configs            ###################
     ####################################################################
-    configs.dataset_dir = Path(configs.working_dir) / 'dataset'
+    configs.dataset_dir = Path(configs.dataset_dir)
     configs.train_game_list = ['game_1', 'game_2', 'game_3', 'game_4', 'game_5']
     configs.test_game_list = ['test_1', 'test_2', 'test_3', 'test_4', 'test_5', 'test_6', 'test_7']
     configs.events_dict = {
