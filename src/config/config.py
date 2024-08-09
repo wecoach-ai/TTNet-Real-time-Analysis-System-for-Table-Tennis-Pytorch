@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.append('../')
 
-from src.utils.misc import make_folder
+from utils.misc import make_folder
 
 
 def parse_configs():

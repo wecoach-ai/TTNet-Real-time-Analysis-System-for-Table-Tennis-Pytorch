@@ -89,9 +89,9 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import torch.nn.functional as F
     import torch
-    from src.config.config import parse_configs
-    from src.data_process.ttnet_data_utils import train_val_data_separation
-    from src.data_process.transformation import Compose, Random_Crop, Resize, Random_HFlip, Random_Rotate
+    from config.config import parse_configs
+    from data_process.ttnet_data_utils import train_val_data_separation
+    from data_process.transformation import Compose, Random_Crop, Resize, Random_HFlip, Random_Rotate
 
     configs = parse_configs()
     game_list = ['game_1']
