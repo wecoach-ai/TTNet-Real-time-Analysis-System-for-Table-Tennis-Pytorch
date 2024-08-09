@@ -142,9 +142,9 @@ def main_worker(gpu_idx, configs):
         for param_group in optimizer.param_groups:
             lr = param_group['lr']
         if logger is not None:
-            logger.info(f'{'*-' * 40}')
-            logger.info(f'{'=' * 35} {epoch}/{configs.num_epochs} {'=' * 35}')
-            logger.info(f'{'*-' * 40}')
+            logger.info(f'{"*-" * 40}')
+            logger.info(f'{"=" * 35} {epoch}/{configs.num_epochs} {"=" * 35}')
+            logger.info(f'{"*-" * 40}')
             logger.info(f'>>> Epoch: [{epoch}/{configs.num_epochs}] learning rate: {lr:.2e}')
 
         if configs.distributed:

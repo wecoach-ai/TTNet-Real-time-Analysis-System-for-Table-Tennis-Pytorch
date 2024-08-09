@@ -116,7 +116,7 @@ def get_events_infor(game_list, configs, dataset_type):
                     print(f'smooth_idx: {smooth_idx} - no ball position for the frame idx {last_f_idx}')
                     continue
                 ball_position_xy = ball_annos[f'{last_f_idx}']
-                ball_position_xy = np.array([ball_position_xy['x'], ball_position_xy['y']], dtype=np.int)
+                ball_position_xy = np.array([ball_position_xy['x'], ball_position_xy['y']], dtype=int)
                 # Ignore the event without ball information
                 if (ball_position_xy[0] < 0) or (ball_position_xy[1] < 0):
                     continue
@@ -139,7 +139,7 @@ def get_events_infor(game_list, configs, dataset_type):
 
 def train_val_data_separation(configs):
     """Seperate data to training and validation sets"""
-    dataset_type = 'training'
+    dataset_type = 'train'
     events_infor, events_labels = get_events_infor(configs.train_game_list, configs, dataset_type)
     if configs.no_val:
         train_events_infor = events_infor
