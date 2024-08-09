@@ -1,6 +1,7 @@
 #!/bin/bash
 
 python main.py \
+  --dataset-dir 'E:\Work\DatasetHandler\data' \
   --working-dir '../' \
   --saved_fn 'ttnet_3rd_phase' \
   --no-val \
