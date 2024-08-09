@@ -90,12 +90,10 @@ def get_events_infor(game_list, configs, dataset_type):
         ball_annos_path = Path(annos_dir) / game_name / 'ball_markup.json'
         events_annos_path = Path(annos_dir) / game_name / 'events_markup.json'
         # Load ball annotations
-        json_ball = open(ball_annos_path)
-        ball_annos = json.load(json_ball)
+        with ball_annos_path.open("r") as ball_fp, events_annos_path.open("r") as events_fp:
+            ball_annos=json.load(ball_fp)
+            events_annos=json.load(events_fp)
 
-        # Load events annotations
-        json_events = open(events_annos_path)
-        events_annos = json.load(json_events)
         for event_frameidx, event_name in events_annos.items():
             event_frameidx = int(event_frameidx)
             smooth_frame_indices = [event_frameidx]  # By default

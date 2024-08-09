@@ -56,9 +56,10 @@ class TTNet_Dataset(Dataset):
         # Use TurboJPEG to speed up the loading images' phase
         resized_imgs = []
         for img_path in img_path_list:
-            in_file = open(img_path, 'rb')
-            resized_imgs.append(cv2.resize(self.jpeg_reader.decode(in_file.read(), 0), (self.w_input, self.h_input)))
-            in_file.close()
+            with img_path.open('rb') as img_fp:
+                resized_imgs.append(
+                    cv2.resize(self.jpeg_reader.decode(img_fp.read(), 0), (self.w_input, self.h_input)))
+
         resized_imgs = np.dstack(resized_imgs)  # (128, 320, 27)
         # Adjust ball pos: full HD --> (320, 128)
         global_ball_pos_xy = self.__resize_ball_pos__(org_ball_pos_xy, self.w_resize_ratio, self.h_resize_ratio)
