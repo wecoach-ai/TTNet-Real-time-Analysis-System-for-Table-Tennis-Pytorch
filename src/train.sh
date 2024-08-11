@@ -20,6 +20,13 @@ python main.py \
   --no_event \
   --smooth-labelling
 
+if [ $? -eq 0 ]; then
+  message="<!channel> First Phase of training is completed without any error."
+else
+  message="<!channel> First Phase of training failed."
+fi
+
+curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL
 # The second phase: Freeze the segmentation and the global modules
 
 python main.py \
@@ -44,6 +51,13 @@ python main.py \
   --freeze_global \
   --smooth-labelling
 
+if [ $? -eq 0 ]; then
+  message="<!channel> Second Phase of training is completed without any error."
+else
+  message="<!channel> Second Phase of training failed."
+fi
+
+curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL
 # The third phase: Finetune all modules
 
 python main.py \
@@ -64,3 +78,11 @@ python main.py \
   --local_weight 1. \
   --pretrained_path ../checkpoints/ttnet_2nd_phase/ttnet_2nd_phase_epoch_30.pth \
   --smooth-labelling
+
+if [ $? -eq 0 ]; then
+  message="<!channel> Third Phase of training is completed without any error."
+else
+  message="<!channel> Third Phase of training failed."
+fi
+
+curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL
