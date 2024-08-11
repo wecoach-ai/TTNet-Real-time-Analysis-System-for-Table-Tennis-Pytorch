@@ -21,3 +21,11 @@ python main.py \
   --freeze_seg \
   --freeze_global \
   --smooth-labelling
+
+if [ $? -eq 0 ]; then
+  message="<!channel> Second Phase of training is completed without any error."
+else
+  message="<!channel> Second Phase of training failed."
+fi
+
+curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL

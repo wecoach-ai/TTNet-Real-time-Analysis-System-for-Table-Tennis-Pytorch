@@ -17,3 +17,11 @@ python main.py \
   --no_local \
   --no_event \
   --smooth-labelling
+
+if [ $? -eq 0 ]; then
+  message="<!channel> First Phase of training is completed without any error."
+else
+  message="<!channel> First Phase of training failed."
+fi
+
+curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL
