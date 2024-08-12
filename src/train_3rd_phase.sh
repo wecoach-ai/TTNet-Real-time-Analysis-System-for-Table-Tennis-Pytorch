@@ -1,8 +1,8 @@
 #!/bin/bash
 
 python main.py \
-  --dataset-dir 'E:\Work\DatasetHandler\data' \
-  --working-dir 'E:\Temporary' \
+  --dataset-dir '' \
+  --working-dir '' \
   --saved_fn 'ttnet_3rd_phase' \
   --no-val \
   --batch_size 8 \
@@ -16,7 +16,7 @@ python main.py \
   --seg_weight 1. \
   --event_weight 1. \
   --local_weight 1. \
-  --pretrained_path ../checkpoints/ttnet_2nd_phase/ttnet_2nd_phase_epoch_30.pth \
+  --pretrained_path '' \
   --smooth-labelling
 
 if [ $? -eq 0 ]; then
@@ -25,4 +25,4 @@ else
   message="<!channel> Third Phase of training failed."
 fi
 
-curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL
+curl --request POST --header 'Content-type: application/json' --data "{\"text\":\"$message\"}" --location $SLACK_WEBHOOK_URL

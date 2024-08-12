@@ -1,8 +1,8 @@
 #!/bin/bash
 
 python main.py \
-  --dataset-dir 'E:\Work\DatasetHandler\data' \
-  --working-dir '../' \
+  --dataset-dir '' \
+  --working-dir '' \
   --saved_fn 'ttnet_1st_phase' \
   --no-val \
   --batch_size 8 \
@@ -24,4 +24,4 @@ else
   message="<!channel> First Phase of training failed."
 fi
 
-curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL
+curl --request POST --header 'Content-type: application/json' --data "{\"text\":\"$message\"}" --location $SLACK_WEBHOOK_URL
