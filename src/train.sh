@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # The first phase: No local, no event
-
 python main.py \
-  --dataset-dir 'E:\Work\DatasetHandler\data' \
-  --working-dir '../' \
+  --dataset-dir '' \
+  --working-dir '' \
   --saved_fn 'ttnet_1st_phase' \
   --no-val \
   --batch_size 8 \
@@ -26,12 +25,12 @@ else
   message="<!channel> First Phase of training failed."
 fi
 
-curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL
+curl --request POST --header 'Content-type: application/json' --data "{\"text\":\"$message\"}" --location $SLACK_WEBHOOK_URL
 # The second phase: Freeze the segmentation and the global modules
 
 python main.py \
-  --dataset-dir 'E:\Work\DatasetHandler\data' \
-  --working-dir '../' \
+  --dataset-dir '' \
+  --working-dir '' \
   --saved_fn 'ttnet_2nd_phase' \
   --no-val \
   --batch_size 8 \
@@ -45,7 +44,7 @@ python main.py \
   --seg_weight 0. \
   --event_weight 2. \
   --local_weight 1. \
-  --pretrained_path ../checkpoints/ttnet_1st_phase/ttnet_1st_phase_epoch_30.pth \
+  --pretrained_path '' \
   --overwrite_global_2_local \
   --freeze_seg \
   --freeze_global \
@@ -57,12 +56,12 @@ else
   message="<!channel> Second Phase of training failed."
 fi
 
-curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL
+curl --request POST --header 'Content-type: application/json' --data "{\"text\":\"$message\"}" --location $SLACK_WEBHOOK_URL
 # The third phase: Finetune all modules
 
 python main.py \
-  --dataset-dir 'E:\Work\DatasetHandler\data' \
-  --working-dir '../' \
+  --dataset-dir '' \
+  --working-dir '' \
   --saved_fn 'ttnet_3rd_phase' \
   --no-val \
   --batch_size 8 \
@@ -76,7 +75,7 @@ python main.py \
   --seg_weight 1. \
   --event_weight 1. \
   --local_weight 1. \
-  --pretrained_path ../checkpoints/ttnet_2nd_phase/ttnet_2nd_phase_epoch_30.pth \
+  --pretrained_path '' \
   --smooth-labelling
 
 if [ $? -eq 0 ]; then
@@ -85,4 +84,4 @@ else
   message="<!channel> Third Phase of training failed."
 fi
 
-curl --request POST --header 'Content-type: application/json' --data '{"text":"$message"}' --location $SLACK_WEBHOOK_URL
+curl --request POST --header 'Content-type: application/json' --data "{\"text\":\"$message\"}" --location $SLACK_WEBHOOK_URL
