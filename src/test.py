@@ -201,6 +201,8 @@ def test(test_loader, model, configs):
                         plt.savefig(Path(configs.saved_dir) /
                                     f'batch_idx_{batch_idx}_sample_idx_{sample_idx}.jpg')
 
+                        plt.close()
+
             if ((batch_idx + 1) % configs.print_freq) == 0:
                 print(
                     f'batch_idx: {batch_idx} - Average iou_seg: {iou_seg.avg:.4f}, mse_global: {mse_global.avg:.1f}, mse_local: {mse_local.avg:.1f}, mse_overall: {mse_overall.avg:.1f}, pce: {pce.avg:.4f} spce: {spce.avg:.4f}')
