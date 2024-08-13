@@ -11,3 +11,11 @@ python test.py \
   --event_thresh 0.5 \
   --smooth-labelling \
   --save_test_output
+
+if [ $? -eq 0 ]; then
+  message="<!channel> Testing of 3rd phase is completed without any error."
+else
+  message="<!channel> Testing of 3rd phase failed."
+fi
+
+curl --request POST --header 'Content-type: application/json' --data "{\"text\":\"$message\"}" --location $SLACK_WEBHOOK_URL
