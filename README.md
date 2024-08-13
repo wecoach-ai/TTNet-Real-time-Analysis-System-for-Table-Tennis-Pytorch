@@ -52,6 +52,11 @@ $ pip install PyTurboJPEG
 ...
 ```
 
+You will require matplotlib for plotting test results:
+```
+$ pip install matplotlib
+```
+
 Other instruction for setting up virtual environments is [here](https://github.com/maudzung/virtual_environment_python3)
 
 ### 2.1. Preparing the dataset
